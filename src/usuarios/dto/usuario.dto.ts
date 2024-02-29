@@ -8,7 +8,7 @@ export class UsuarioDto {
     @IsNotEmpty({ message: 'O campo email não pode estar vazio.' })
     @IsString()
     @IsEmail({}, { message: 'Formato de e-mail inválido.' })
-    emal: string;
+    email: string;
 
     @IsNotEmpty({ message: 'O campo senha não pode estar vazio.' })
     @IsString()
