@@ -34,6 +34,16 @@ export class ProdutoService {
         })
     }
 
+    async getAllProducts(categoria_id?: string): Promise<ProdutoDto[]> {
+        const produtos = await this.prismaService.produto.findMany();
+
+        if (categoria_id) {
+            return produtos.filter(produto => produto.categoria_id === parseInt(categoria_id));
+        }
+
+        return produtos;
+    }
+
     async getById(id: number): Promise<ProdutoDto> {
         return await this.prismaService.produto.findUnique({
             where: {
