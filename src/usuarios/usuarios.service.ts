@@ -44,4 +44,27 @@ export class UsuariosService {
             }
         })
     }
+
+    async updateUser(id: number, dataUser: UsuarioDto) {
+        const usuario = await this.getUserById(id);
+        if (!usuario) throw new HttpException('Usuário não encontrado.', HttpStatus.NOT_FOUND);
+
+        const emailVerify = await this.getUserByEmail(dataUser.email);
+        if (emailVerify) throw new HttpException('E-mail já cadastrado.', HttpStatus.BAD_REQUEST);
+
+        const hashNewPassword = await this.hashService.hashPassword(dataUser.senha);
+
+        return await this.prismaService.usuario.update({
+            where: {
+                id: usuario.id
+            },
+            data: {
+                nome: dataUser.nome,
+                email: dataUser.email,
+                senha: hashNewPassword
+
+            }
+        })
+    }
+
 }
