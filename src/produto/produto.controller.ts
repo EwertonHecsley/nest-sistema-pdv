@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Param, Post, Put, Query, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Put, Query, Res, UseGuards } from '@nestjs/common';
 import { ProdutoService } from './produto.service';
 import { JwtAuthGuard } from 'src/auth/guard/jwt.guards';
 import { ProdutoDto } from './dto/produto.dto';
@@ -21,6 +21,15 @@ export class ProdutoController {
         await this.produtoService.update(parseInt(id), dataProduto);
 
         return res.status(HttpStatus.NO_CONTENT).send();
+    }
+
+
+    @Get(':id')
+    async getProduct(@Param('id') id: string, @Res() res: Response) {
+        const produto = await this.produtoService.getById(parseInt(id));
+        if (!produto) throw new HttpException('Produto não encontrado.', HttpStatus.NOT_FOUND);
+
+        return res.status(HttpStatus.OK).json(produto);
     }
 
     @Get()
