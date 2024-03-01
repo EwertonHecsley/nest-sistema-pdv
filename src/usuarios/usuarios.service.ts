@@ -36,4 +36,12 @@ export class UsuariosService {
             }
         })
     }
+
+    async getUserById(id: number): Promise<UsuarioDto> {
+        return await this.prismaService.usuario.findUnique({
+            where: {
+                id
+            }
+        })
+    }
 }

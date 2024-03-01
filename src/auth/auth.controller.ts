@@ -13,9 +13,11 @@ export class AuthController {
 
         const usuario = await this.authService.validateUser(email, senha);
 
+        const token = await this.authService.getToken(usuario);
+
         const { senha: _, ...result } = usuario;
 
-        const token = await this.authService.getToken(usuario);
+        req.user = result;
 
         return res.status(HttpStatus.ACCEPTED).json({ mensagem: 'Usuário logado com sucesso.', usuario: result, token });
 
