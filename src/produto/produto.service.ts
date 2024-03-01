@@ -34,6 +34,17 @@ export class ProdutoService {
         })
     }
 
+    async destroy(id: number) {
+        const produto = await this.getById(id);
+        if (!produto) throw new HttpException('Produto não encontrado.', HttpStatus.NOT_FOUND);
+
+        return await this.prismaService.produto.delete({
+            where: {
+                id
+            }
+        })
+    }
+
     async getAllProducts(categoria_id?: string): Promise<ProdutoDto[]> {
         const produtos = await this.prismaService.produto.findMany();
 

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Put, Query, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Query, Res, UseGuards } from '@nestjs/common';
 import { ProdutoService } from './produto.service';
 import { JwtAuthGuard } from 'src/auth/guard/jwt.guards';
 import { ProdutoDto } from './dto/produto.dto';
@@ -23,6 +23,12 @@ export class ProdutoController {
         return res.status(HttpStatus.NO_CONTENT).send();
     }
 
+    @Delete(':id')
+    async deleteProduct(@Param('id') id: string, @Res() res: Response) {
+        await this.produtoService.destroy(parseInt(id));
+
+        return res.status(HttpStatus.NO_CONTENT).send();
+    }
 
     @Get(':id')
     async getProduct(@Param('id') id: string, @Res() res: Response) {
