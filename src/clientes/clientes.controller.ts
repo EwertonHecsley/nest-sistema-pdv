@@ -46,6 +46,15 @@ export class ClientesController {
         return res.status(HttpStatus.NO_CONTENT).send();
     }
 
+    @Get(':id')
+    async getById(@Param('id') id: string, @Res() res: Response) {
+        const cliente = await this.clienteService.getClientById(parseInt(id));
+
+        if (!cliente) throw new HttpException('Cliente não encontrado', HttpStatus.NOT_FOUND);
+
+        return res.status(HttpStatus.OK).json({ mensagem: 'Cliente encontrado com sucesso.', cliente });
+    }
+
     @Get()
     async getAll(@Res() res: Response) {
         return res.json(await this.clienteService.getAllClients());
