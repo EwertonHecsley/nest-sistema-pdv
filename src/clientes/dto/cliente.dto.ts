@@ -1,5 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
-import * as cpfValidate from 'cpf-cnpj-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class ClienteDto {
     @IsNotEmpty({ message: 'O campo nome não pode ser vazio.' })
@@ -15,21 +14,27 @@ export class ClienteDto {
     @IsString()
     cpf: string;
 
+    @IsOptional()
     @IsString()
     cep?: string;
 
+    @IsOptional()
     @IsString()
     rua?: string;
 
+    @IsOptional()
     @IsString()
     numero?: string;
 
+    @IsOptional()
     @IsString()
     bairro?: string;
 
+    @IsOptional()
     @IsString()
     cidade?: string;
 
+    @IsOptional()
     @IsString()
     estado?: string;
 
