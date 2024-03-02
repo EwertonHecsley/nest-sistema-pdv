@@ -12,8 +12,19 @@ export class ClientesService {
         })
     }
 
+    async updateClient(id: number, dataCliente: ClienteDto) {
+        return await this.prismaService.cliente.update({
+            where: { id },
+            data: dataCliente
+        })
+    }
+
     async getAllClients(): Promise<ClienteDto[]> {
-        return await this.prismaService.cliente.findMany();
+        return await this.prismaService.cliente.findMany({
+            orderBy: {
+                id: 'asc'
+            }
+        });
     }
 
     async getClientByEmail(email: string): Promise<ClienteDto> {
@@ -28,6 +39,14 @@ export class ClientesService {
         return await this.prismaService.cliente.findUnique({
             where: {
                 cpf
+            }
+        })
+    }
+
+    async getClientById(id: number): Promise<ClienteDto> {
+        return await this.prismaService.cliente.findUnique({
+            where: {
+                id
             }
         })
     }

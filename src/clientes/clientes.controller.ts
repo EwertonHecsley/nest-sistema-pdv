@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Post, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Put, Res, UseGuards } from '@nestjs/common';
 import { ClientesService } from './clientes.service';
 import { Response } from 'express';
 import { JwtAuthGuard } from 'src/auth/guard/jwt.guards';
@@ -27,6 +27,23 @@ export class ClientesController {
         const cliente = await this.clienteService.createClient({ nome, email, cpf });
 
         return res.status(HttpStatus.CREATED).json({ mensagem: 'Cliente cadastrado com sucesso.', cliente });
+    }
+
+    @Put(':id')
+    async update(@Param('id') id: string, @Body() dataCliente: ClienteDto, @Res() res: Response) {
+        const { nome, email, cpf } = dataCliente;
+
+        if (!await this.clienteService.getClientById(parseInt(id))) throw new HttpException('Cliente não encontrado', HttpStatus.NOT_FOUND);
+
+        if (!this.cpfService.isValid(cpf)) throw new HttpException('Formato CPF Inválido.', HttpStatus.BAD_REQUEST);
+
+        if (await this.clienteService.getClientByCpf(cpf)) throw new HttpException('CPF já cadastrado.', HttpStatus.BAD_REQUEST);
+
+        if (await this.clienteService.getClientByEmail(email)) throw new HttpException('Email já cadastrado.', HttpStatus.BAD_REQUEST);
+
+        await this.clienteService.updateClient(parseInt(id), { nome, email, cpf });
+
+        return res.status(HttpStatus.NO_CONTENT).send();
     }
 
     @Get()
