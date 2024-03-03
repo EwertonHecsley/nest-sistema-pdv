@@ -58,6 +58,7 @@ model Pedido {
   clienteId     Cliente         @relation(fields: [cliente_id], references: [id])
   cliente_id    Int
   valor_total   Int
+  observacao    String?
   PedidoProduto PedidoProduto[]
 
   @@map("pedidos")
