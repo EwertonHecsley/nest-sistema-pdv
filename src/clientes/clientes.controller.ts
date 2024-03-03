@@ -15,23 +15,22 @@ export class ClientesController {
 
     @Post()
     async create(@Body() dataCliente: ClienteDto, @Res() res: Response) {
-        const { nome, email, cpf } = dataCliente;
 
-        if (!this.cpfService.isValid(cpf)) throw new HttpException('Formato CPF Inválido.', HttpStatus.BAD_REQUEST);
+        if (!this.cpfService.isValid(dataCliente.cpf)) throw new HttpException('Formato CPF Inválido.', HttpStatus.BAD_REQUEST);
 
-        if (await this.clienteService.getClientByCpf(cpf)) throw new HttpException('CPF já cadastrado.', HttpStatus.BAD_REQUEST);
+        if (await this.clienteService.getClientByCpf(dataCliente.cpf)) throw new HttpException('CPF já cadastrado.', HttpStatus.BAD_REQUEST);
 
 
-        if (await this.clienteService.getClientByEmail(email)) throw new HttpException('Email já cadastrado.', HttpStatus.BAD_REQUEST);
+        if (await this.clienteService.getClientByEmail(dataCliente.email)) throw new HttpException('Email já cadastrado.', HttpStatus.BAD_REQUEST);
 
-        const cliente = await this.clienteService.createClient({ nome, email, cpf });
+        const cliente = await this.clienteService.createClient(dataCliente);
 
         return res.status(HttpStatus.CREATED).json({ mensagem: 'Cliente cadastrado com sucesso.', cliente });
     }
 
     @Put(':id')
     async update(@Param('id') id: string, @Body() dataCliente: ClienteDto, @Res() res: Response) {
-        const { nome, email, cpf } = dataCliente;
+        const { email, cpf } = dataCliente;
 
         if (!await this.clienteService.getClientById(parseInt(id))) throw new HttpException('Cliente não encontrado', HttpStatus.NOT_FOUND);
 
@@ -41,7 +40,7 @@ export class ClientesController {
 
         if (await this.clienteService.getClientByEmail(email)) throw new HttpException('Email já cadastrado.', HttpStatus.BAD_REQUEST);
 
-        await this.clienteService.updateClient(parseInt(id), { nome, email, cpf });
+        await this.clienteService.updateClient(parseInt(id), dataCliente);
 
         return res.status(HttpStatus.NO_CONTENT).send();
     }
