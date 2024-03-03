@@ -54,12 +54,12 @@ model Cliente {
 }
 
 model Pedido {
-  id            Int             @id @default(autoincrement())
-  clienteId     Cliente         @relation(fields: [cliente_id], references: [id])
-  cliente_id    Int
-  valor_total   Int
-  observacao    String?
-  PedidoProduto PedidoProduto[]
+  id             Int             @id @default(autoincrement())
+  clienteId      Cliente         @relation(fields: [cliente_id], references: [id])
+  cliente_id     Int
+  valor_total    Int
+  observacao     String?
+  pedido_produto PedidoProduto[]
 
   @@map("pedidos")
 }

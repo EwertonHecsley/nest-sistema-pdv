@@ -18,7 +18,7 @@ export class PedidoDto {
     id?: number;
 }
 
-class CPedidos {
+export class CPedidos {
 
     @IsNotEmpty({ message: 'O campo produto_id não pode ser vazio.' })
     @IsNumber()
@@ -27,4 +27,7 @@ class CPedidos {
     @IsNotEmpty({ message: 'O campo quantidade_produto não pode ser vazio.' })
     @IsNumber()
     quantidade_produto: number;
+
+    @IsOptional()
+    id: number;
 }
