@@ -1,30 +1,42 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma-service/prisma.service';
 import { CPedidos, PedidoDto } from './dto/pedido.dto';
-import { MetodosExtras } from './utils/metodosExtras';
 
 @Injectable()
 export class PedidosService {
     constructor(
-        private readonly prismaService: PrismaService, private readonly metodosExtras: MetodosExtras) { }
+        private readonly prismaService: PrismaService) { }
 
     async createPedido(dataPedido: PedidoDto) {
         const { cliente_id, pedido_produtos, observacao } = dataPedido;
 
-        const produtoNaCesta = await this.prismaService.produto.findMany({
+        await this.verifyProdutosExistAndQuantity(pedido_produtos);
+
+        const produtosNaCesta = await this.prismaService.produto.findMany({
             where: {
                 id: {
-                    in: pedido_produtos.map(item => item.produto_id)
+                    in: pedido_produtos.map(p => p.produto_id)
                 }
             }
-        })
+        });
 
-        const { valorPedido, resposta } = await this.calcularValorPedido(pedido_produtos, produtoNaCesta)
+        const { valorPedido, resposta } = await this.calcularValorPedido(pedido_produtos, produtosNaCesta);
 
-        const { id } = await this.metodosExtras.inserirPedidoNoBanco(cliente_id, valorPedido, observacao);
+        const { id } = await this.inserirPedidoNoBanco(cliente_id, valorPedido, observacao);
 
-        await this.metodosExtras.inserirProdutosDoPedido(resposta, id);
+        await this.inserirProdutosDoPedido(resposta, id);
 
+    }
+
+    async verifyProdutosExistAndQuantity(pedido_produto: any[]) {
+        const produtosDatabase = await this.prismaService.produto.findMany();
+
+        for (const p of pedido_produto) {
+            const { produto_id, quantidade_produto } = p;
+            const produto = produtosDatabase.find(p => p.id === produto_id);
+            if (!produto) throw new HttpException(`Produto ${produto_id} não encontrado.`, HttpStatus.NOT_FOUND);
+            if (produto.quantidade_estoque < quantidade_produto) throw new HttpException(`Quantidade do produto: ${produto_id} insuficiente.`, HttpStatus.BAD_REQUEST);
+        }
     }
 
     async calcularValorPedido(pedido_produtos: CPedidos[], produtoNaCesta: any[]) {
@@ -32,7 +44,7 @@ export class PedidosService {
         const resposta = [];
 
         for (let cestaProduto of pedido_produtos) {
-            const produto = produtoNaCesta.find(p => p.id === cestaProduto.id);
+            const produto = produtoNaCesta.find(p => p.id === cestaProduto.produto_id);
             if (produto) {
                 valorPedido += cestaProduto.quantidade_produto * produto.valor;
                 resposta.push({
@@ -45,5 +57,39 @@ export class PedidosService {
 
         return { valorPedido, resposta };
     }
+
+    async inserirPedidoNoBanco(cliente_id: number, valor_total: number, observacao?: string) {
+        return await this.prismaService.pedido.create({
+            data: {
+                cliente_id,
+                valor_total,
+                observacao
+            }, select: {
+                id: true
+            }
+        });
+    }
+
+    async inserirProdutosDoPedido(resposta: any[], pedido_id: number) {
+        for (let index of resposta) {
+            await this.prismaService.pedidoProduto.create({
+                data: {
+                    pedido_id,
+                    ...index
+                }
+            });
+            await this.prismaService.produto.update({
+                where: {
+                    id: index.produto_id
+                },
+                data: {
+                    quantidade_estoque: {
+                        decrement: index.quantidade_produto
+                    }
+                }
+            })
+        }
+    }
+
 }
 

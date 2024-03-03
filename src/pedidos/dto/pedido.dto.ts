@@ -1,4 +1,4 @@
-import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsArray, IsNotEmpty, IsNotEmptyObject, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class PedidoDto {
 
@@ -6,8 +6,8 @@ export class PedidoDto {
     @IsNumber()
     cliente_id: number;
 
-    @IsNotEmpty({ message: 'O campo data_pedido, não pode ser vazio.' })
     @IsArray()
+    @IsNotEmpty({ message: 'O campo pedido_produtos, não pode ser vazio.' })
     pedido_produtos: CPedidos[];
 
     @IsOptional()
