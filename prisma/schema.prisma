@@ -25,27 +25,52 @@ model Categoria {
 }
 
 model Produto {
-  id                 Int       @id @default(autoincrement())
+  id                 Int             @id @default(autoincrement())
   descricao          String
   quantidade_estoque Int
   valor              Int
-  categoriaId        Categoria @relation(fields: [categoria_id], references: [id])
+  categoriaId        Categoria       @relation(fields: [categoria_id], references: [id])
   categoria_id       Int
+  produto_imagem     String?
+  PedidoProduto      PedidoProduto[]
 
   @@map("produtos")
 }
 
 model Cliente {
-  id     Int     @id @default(autoincrement())
+  id     Int      @id @default(autoincrement())
   nome   String
-  email  String  @unique
-  cpf    String  @unique
+  email  String   @unique
+  cpf    String   @unique
   cep    String?
   rua    String?
   numero String?
   bairro String?
   cidade String?
   estado String?
+  Pedido Pedido[]
 
   @@map("clientes")
+}
+
+model Pedido {
+  id            Int             @id @default(autoincrement())
+  clienteId     Cliente         @relation(fields: [cliente_id], references: [id])
+  cliente_id    Int
+  valor_total   Int
+  PedidoProduto PedidoProduto[]
+
+  @@map("pedidos")
+}
+
+model PedidoProduto {
+  id                 Int     @id @default(autoincrement())
+  pedidoId           Pedido  @relation(fields: [pedido_id], references: [id])
+  pedido_id          Int
+  produtoId          Produto @relation(fields: [produto_id], references: [id])
+  produto_id         Int
+  quantidade_produto Int
+  valor_produto      Int
+
+  @@map("pedido_produtos")
 }

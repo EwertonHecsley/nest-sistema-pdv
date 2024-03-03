@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class ProdutoDto {
 
@@ -17,5 +17,9 @@ export class ProdutoDto {
     @IsNotEmpty({ message: 'O campo categoria_id, não pode ser vazio.' })
     @IsNumber()
     categoria_id: number
+
+    @IsOptional()
+    @IsString()
+    produto_imagem?: string;
 
 }
