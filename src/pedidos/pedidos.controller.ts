@@ -33,7 +33,7 @@ export class PedidosController {
     async listAll(@Res() res: Response) {
         const result = await this.pedidosService.listAllPedidos();
 
-        return res.status(HttpStatus.OK).json({ pedido: result });
+        return res.status(HttpStatus.OK).json(result);
     }
 
 }
