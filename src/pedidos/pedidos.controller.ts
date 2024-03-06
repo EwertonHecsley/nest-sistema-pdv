@@ -1,4 +1,4 @@
-import { Body, Controller, HttpException, HttpStatus, Post, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Post, Res, UseGuards } from '@nestjs/common';
 import { PedidosService } from './pedidos.service';
 import { JwtAuthGuard } from 'src/auth/guard/jwt.guards';
 import { PedidoDto } from './dto/pedido.dto';
@@ -28,4 +28,12 @@ export class PedidosController {
 
         return res.status(HttpStatus.CREATED).json({ mensagem: 'Pedido cadastrado com sucesso.' });
     }
+
+    @Get()
+    async listAll(@Res() res: Response) {
+        const result = await this.pedidosService.listAllPedidos();
+
+        return res.status(HttpStatus.OK).json({ pedido: result });
+    }
+
 }

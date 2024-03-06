@@ -91,5 +91,41 @@ export class PedidosService {
         }
     }
 
+    async listAllPedidos() {
+        const linhas = await this.prismaService.pedido.findMany({
+            include: {
+                pedido_produto: true
+            }
+        });
+
+        console.log(linhas);
+        console.log(linhas[0].pedido_produto)
+
+
+        const resposta: any[] = [];
+        let pedidoAtual: any = null;
+
+        for (let linha of linhas) {
+            if (!pedidoAtual || linha['id'] !== pedidoAtual.id) {
+                pedidoAtual = {
+                    id: linha['id'],
+                    valor_total: linha['valor_total'],
+                    observacao: linha['observacao'],
+                    cliente_id: linha['cliente_id'],
+                    pedido_produto: []
+                };
+                resposta.push({ pedido: pedidoAtual });
+            }
+
+            pedidoAtual.pedido_produto.push({
+                id: linha['pedido_produto'][0]?.['id'],
+                quantidade_produto: linha['pedido_produto'][0]?.['quantidade_produto'],
+                valor_produto: linha['pedido_produto'][0]?.['valor_produto'],
+                produto_id: linha['pedido_produto'][0]?.['produto_id']
+            });
+        };
+
+        return resposta;
+    }
 }
 
