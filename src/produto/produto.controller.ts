@@ -16,8 +16,8 @@ export class ProdutoController {
         @UploadedFile() produto_imagem: Express.Multer.File,
         @Body() dataProduto: ProdutoDto,
         @Res() res: Response) {
-        console.log(produto_imagem);
-        const produto = await this.produtoService.create(dataProduto);
+
+        const produto = await this.produtoService.create(produto_imagem, dataProduto);
 
         return res.status(HttpStatus.CREATED).json({ mensagem: 'Produto cadastrado com sucesso.', produto });
     }

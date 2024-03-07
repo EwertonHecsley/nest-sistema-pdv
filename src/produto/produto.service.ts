@@ -2,29 +2,36 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CategoriasService } from 'src/categorias/categorias.service';
 import { ProdutoDto } from './dto/produto.dto';
 import { PrismaService } from 'src/database/prisma-service/prisma.service';
+import { ArquivosService } from 'src/arquivos/arquivos.service';
 
 @Injectable()
 export class ProdutoService {
     constructor(
         private readonly categoriaService: CategoriasService,
-        private readonly prismaService: PrismaService
+        private readonly prismaService: PrismaService,
+        private readonly bucketService: ArquivosService
     ) { }
 
-    async create(data: ProdutoDto): Promise<ProdutoDto> {
-        const { categoria_id, descricao, quantidade_estoque, valor, produto_imagem } = data;
+    async create(file: Express.Multer.File, data: ProdutoDto): Promise<ProdutoDto> {
+        const { categoria_id, descricao, quantidade_estoque, valor } = data;
 
         const categoriaExist = await this.categoriaService.getById(Number(categoria_id));
         if (!categoriaExist) throw new HttpException('Categoria de produto não encontrado.', HttpStatus.NOT_FOUND);
 
-        return await this.prismaService.produto.create({
+        let produto = await this.prismaService.produto.create({
             data: {
                 descricao,
                 quantidade_estoque: Number(quantidade_estoque),
                 valor: Number(valor),
-                categoria_id: Number(categoria_id),
-                produto_imagem
+                categoria_id: Number(categoria_id)
             }
         })
+
+        if (file) {
+            console.log(file)
+        }
+
+        return produto;
     }
 
     async update(id: number, data: ProdutoDto): Promise<ProdutoDto> {
