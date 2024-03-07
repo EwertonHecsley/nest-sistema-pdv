@@ -11,26 +11,42 @@ export class ProdutoService {
     ) { }
 
     async create(data: ProdutoDto): Promise<ProdutoDto> {
-        const categoriaExist = await this.categoriaService.getById(data.categoria_id);
+        const { categoria_id, descricao, quantidade_estoque, valor, produto_imagem } = data;
+
+        const categoriaExist = await this.categoriaService.getById(Number(categoria_id));
         if (!categoriaExist) throw new HttpException('Categoria de produto não encontrado.', HttpStatus.NOT_FOUND);
 
         return await this.prismaService.produto.create({
-            data
+            data: {
+                descricao,
+                quantidade_estoque: Number(quantidade_estoque),
+                valor: Number(valor),
+                categoria_id: Number(categoria_id),
+                produto_imagem
+            }
         })
     }
 
     async update(id: number, data: ProdutoDto): Promise<ProdutoDto> {
+        const { categoria_id, descricao, quantidade_estoque, valor, produto_imagem } = data;
+
         const produtoExiste = await this.getById(id);
         if (!produtoExiste) throw new HttpException('Produto não encontrado.', HttpStatus.NOT_FOUND);
 
-        const categoriaExist = await this.categoriaService.getById(data.categoria_id);
+        const categoriaExist = await this.categoriaService.getById(Number(categoria_id));
         if (!categoriaExist) throw new HttpException('Categoria de produto não encontrado.', HttpStatus.NOT_FOUND);
 
         return await this.prismaService.produto.update({
             where: {
                 id
             },
-            data
+            data: {
+                descricao,
+                quantidade_estoque: Number(quantidade_estoque),
+                valor: Number(valor),
+                categoria_id: Number(categoria_id),
+                produto_imagem
+            }
         })
     }
 

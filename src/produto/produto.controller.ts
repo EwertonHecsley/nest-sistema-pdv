@@ -1,8 +1,9 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Query, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Query, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ProdutoService } from './produto.service';
 import { JwtAuthGuard } from 'src/auth/guard/jwt.guards';
 import { ProdutoDto } from './dto/produto.dto';
 import { Response } from 'express';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @UseGuards(JwtAuthGuard)
 @Controller('produto')
@@ -10,7 +11,12 @@ export class ProdutoController {
     constructor(private readonly produtoService: ProdutoService) { }
 
     @Post()
-    async createProduct(@Body() dataProduto: ProdutoDto, @Res() res: Response) {
+    @UseInterceptors(FileInterceptor('produto_imagem'))
+    async createProduct(
+        @UploadedFile() produto_imagem: Express.Multer.File,
+        @Body() dataProduto: ProdutoDto,
+        @Res() res: Response) {
+        console.log(produto_imagem);
         const produto = await this.produtoService.create(dataProduto);
 
         return res.status(HttpStatus.CREATED).json({ mensagem: 'Produto cadastrado com sucesso.', produto });
