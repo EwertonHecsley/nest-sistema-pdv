@@ -38,6 +38,10 @@ export class ProdutoService {
         const produto = await this.getById(id);
         if (!produto) throw new HttpException('Produto não encontrado.', HttpStatus.NOT_FOUND);
 
+        const verifyProductContainPedido = await this.prismaService.pedidoProduto.findMany({ where: { produto_id: id } });
+
+        if (verifyProductContainPedido.length > 0) throw new HttpException('Produto possui pedido cadastrado.', HttpStatus.BAD_REQUEST);
+
         return await this.prismaService.produto.delete({
             where: {
                 id
