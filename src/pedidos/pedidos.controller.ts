@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Post, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Post, Query, Res, UseGuards } from '@nestjs/common';
 import { PedidosService } from './pedidos.service';
 import { JwtAuthGuard } from 'src/auth/guard/jwt.guards';
 import { PedidoDto } from './dto/pedido.dto';
@@ -30,8 +30,8 @@ export class PedidosController {
     }
 
     @Get()
-    async listAll(@Res() res: Response) {
-        const result = await this.pedidosService.listAllPedidos();
+    async listAll(@Query('cliente_id') cliente_id: string, @Res() res: Response) {
+        const result = await this.pedidosService.listAllPedidos(cliente_id);
 
         return res.status(HttpStatus.OK).json(result);
     }

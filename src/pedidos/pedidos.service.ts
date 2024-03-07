@@ -91,7 +91,8 @@ export class PedidosService {
         }
     }
 
-    async listAllPedidos() {
+    async listAllPedidos(query: string) {
+
         const linhas = await this.prismaService.pedido.findMany({
             include: {
                 pedido_produto: true
@@ -100,11 +101,23 @@ export class PedidosService {
 
         const resposta: any[] = [];
 
-        for (let pedido of linhas) {
-            resposta.push({
-                pedido
-            })
+        if (query && query !== "") {
+            const verifyCliente = await this.prismaService
+                .cliente.findMany({
+                    where: {
+                        id: parseInt(query)
+                    }
+                });
+            if (verifyCliente.length === 0) throw new HttpException('Cliente não encontrado.', HttpStatus.NOT_FOUND);
+
+            const filtroCliente = linhas
+                .filter(cliente => cliente.cliente_id === parseInt(query));
+
+            filtroCliente.forEach(pedido => resposta.push({ pedido }))
+            return resposta;
         }
+
+        linhas.forEach(pedido => resposta.push({ pedido }))
 
         return resposta;
 
