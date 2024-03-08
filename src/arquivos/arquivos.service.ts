@@ -16,4 +16,13 @@ export class ArquivosService {
             url: `https://${process.env.BUCKET_KEY_NAME}.${process.env.BUCKET_ENDPOINT}/${imagem.Key}`
         }
     }
+
+    async getFile(id: number) {
+        const imagem = await s3.listObjects({
+            Bucket: process.env.BUCKET_KEY_NAME,
+            Prefix: `produtos/${id}`
+        }).promise();
+
+        return imagem.Contents;
+    }
 }
