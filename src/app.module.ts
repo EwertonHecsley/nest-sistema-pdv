@@ -8,6 +8,7 @@ import { ProdutoModule } from './produto/produto.module';
 import { ClientesModule } from './clientes/clientes.module';
 import { PedidosModule } from './pedidos/pedidos.module';
 import { ArquivosModule } from './arquivos/arquivos.module';
+import { AxiosModule } from './axios/axios.module';
 
 @Module({
   imports: [
@@ -21,7 +22,8 @@ import { ArquivosModule } from './arquivos/arquivos.module';
     ProdutoModule,
     ClientesModule,
     PedidosModule,
-    ArquivosModule],
+    ArquivosModule,
+    AxiosModule],
   controllers: [],
   providers: [],
 })
