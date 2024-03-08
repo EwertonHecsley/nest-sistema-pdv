@@ -28,7 +28,7 @@ export class PedidosService {
         const { id } = await this.inserirPedidoNoBanco(cliente_id, valorPedido, observacao);
 
         await this.inserirProdutosDoPedido(resposta, id);
-
+        //teste de envio de email
         await this.emailService.sendEmail("Ewerton Hecsley", "hecsleyavschin@gmail.com");
 
     }
