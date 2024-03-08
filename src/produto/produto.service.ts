@@ -28,7 +28,19 @@ export class ProdutoService {
         })
 
         if (file) {
-            console.log(file)
+            const { buffer, mimetype, originalname } = file;
+            const { id } = produto;
+
+            const imagem = await this.bucketService.upload(`produtos/${id}/${originalname}`, buffer, mimetype);
+
+            produto = await this.prismaService.produto.update({
+                where: {
+                    id
+                },
+                data: {
+                    produto_imagem: imagem.url
+                }
+            })
         }
 
         return produto;
