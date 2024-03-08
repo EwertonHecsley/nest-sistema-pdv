@@ -8,7 +8,8 @@ import { ProdutoModule } from './produto/produto.module';
 import { ClientesModule } from './clientes/clientes.module';
 import { PedidosModule } from './pedidos/pedidos.module';
 import { ArquivosModule } from './arquivos/arquivos.module';
-import { AxiosModule } from './axios/axios.module';
+import { MustacheModule } from './utils/mustache/mustache.module';
+import { EmailModule } from './utils/email/email.module';
 
 @Module({
   imports: [
@@ -23,7 +24,8 @@ import { AxiosModule } from './axios/axios.module';
     ClientesModule,
     PedidosModule,
     ArquivosModule,
-    AxiosModule],
+    MustacheModule,
+    EmailModule],
   controllers: [],
   providers: [],
 })

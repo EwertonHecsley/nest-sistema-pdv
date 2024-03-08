@@ -1,11 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma-service/prisma.service';
 import { CPedidos, PedidoDto } from './dto/pedido.dto';
+import { EmailService } from 'src/utils/email/email.service';
 
 @Injectable()
 export class PedidosService {
     constructor(
-        private readonly prismaService: PrismaService) { }
+        private readonly prismaService: PrismaService,
+        private readonly emailService: EmailService
+    ) { }
 
     async createPedido(dataPedido: PedidoDto) {
         const { cliente_id, pedido_produtos, observacao } = dataPedido;
@@ -25,6 +28,8 @@ export class PedidosService {
         const { id } = await this.inserirPedidoNoBanco(cliente_id, valorPedido, observacao);
 
         await this.inserirProdutosDoPedido(resposta, id);
+
+        await this.emailService.sendEmail("Ewerton Hecsley", "hecsleyavschin@gmail.com");
 
     }
 
