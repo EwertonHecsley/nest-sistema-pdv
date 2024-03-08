@@ -25,4 +25,11 @@ export class ArquivosService {
 
         return imagem.Contents;
     }
+
+    async deleteFile(path: string) {
+        await s3.deleteObject({
+            Bucket: process.env.BUCKET_KEY_NAME,
+            Key: path
+        }).promise()
+    }
 }

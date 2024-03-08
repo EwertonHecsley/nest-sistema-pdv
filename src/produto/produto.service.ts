@@ -77,6 +77,12 @@ export class ProdutoService {
 
         if (verifyProductContainPedido.length > 0) throw new HttpException('Produto possui pedido cadastrado.', HttpStatus.BAD_REQUEST);
 
+        const imagem_bucket = await this.bucketService.getFile(id);
+
+        if (imagem_bucket.length > 0) {
+            await this.bucketService.deleteFile(imagem_bucket[0].Key);
+        }
+
         return await this.prismaService.produto.delete({
             where: {
                 id
