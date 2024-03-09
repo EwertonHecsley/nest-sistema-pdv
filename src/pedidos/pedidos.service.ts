@@ -29,7 +29,10 @@ export class PedidosService {
 
         await this.inserirProdutosDoPedido(resposta, id);
         //teste de envio de email
-        await this.emailService.sendEmail("Ewerton Hecsley", "hecsleyavschin@gmail.com");
+
+        console.log((await this.emailService.sendEmail("Ewerton Hecsley", "hecsleyavschin@gmail.com")).data);
+
+        await this.emailService.sendEmail("Ewerton Hecsley", "hecsleyavschin@gmail.com")
 
     }
 
