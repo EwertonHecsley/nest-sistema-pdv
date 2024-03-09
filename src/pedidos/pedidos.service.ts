@@ -28,11 +28,10 @@ export class PedidosService {
         const { id } = await this.inserirPedidoNoBanco(cliente_id, valorPedido, observacao);
 
         await this.inserirProdutosDoPedido(resposta, id);
-        //teste de envio de email
 
-        console.log((await this.emailService.sendEmail("Ewerton Hecsley", "hecsleyavschin@gmail.com")).data);
+        const [cliente] = await this.prismaService.cliente.findMany({ where: { id: cliente_id } });
 
-        await this.emailService.sendEmail("Ewerton Hecsley", "hecsleyavschin@gmail.com")
+        await this.emailService.sendEmail(cliente.nome, cliente.email);
 
     }
 
